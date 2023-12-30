@@ -9,14 +9,14 @@
  * innovation number
  */
 
-class Connection {
+class ConnectionGene {
 
 public:
-	Connection();
-	Connection(int in, int out, double weight,
+	ConnectionGene();
+	ConnectionGene(int in, int out, double weight,
 		bool enabled, int inn);
 
-	friend std::ostream &operator<<(std::ostream &out, const Connection &c);
+	friend std::ostream &operator<<(std::ostream &out, const ConnectionGene &c);
 	
 	int _inNodeID;
 	int _outNodeID;

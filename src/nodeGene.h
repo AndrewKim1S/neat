@@ -7,7 +7,7 @@
  * Node Type
  */
 
-class Node {
+class NodeGene {
 
 public:
 	enum Type {
@@ -16,11 +16,12 @@ public:
 		OUTPUT
 	};
 
-	Node();
-	Node(int id, Type t);
+	NodeGene();
+	NodeGene(int id, int layer, Type t);
 
-	friend std::ostream &operator<<(std::ostream &out, const Node n);
+	friend std::ostream &operator<<(std::ostream &out, const NodeGene n);
 
 	int _id;
+	int _layer;
 	Type _type;
 };

@@ -1,24 +1,54 @@
 #include "genome.h"
 
 
-Genome::Genome() {}
+Genome::Genome() {
+	_innovationCounter = 1;
+}
 
 Genome::~Genome() {}
 
-void Genome::addNode(Node n) {
+void Genome::addNode(NodeGene &n) {
 	_nodes.push_back(n);
 }
 
-void Genome::addConnection(Connection c) {
+void Genome::addConnection(ConnectionGene &c) {
 	_connections.push_back(c);
+	_innovationCounter ++;
 }
 
 // TODO
-void Genome::mutateConnection() {
+// check node layer so connections go forward
+bool Genome::mutateConnection() {
+	int srcNodeID;
+	int dstNodeID;
+	bool found = false;
+	while (!found) {
+		bool check = true;
+		srcNodeID = 1 + (rand() % _nodes.size());
+		dstNodeID = 1 + (rand() % _nodes.size());
+		
+		for(auto &co : _connections) {
+			if((co._inNodeID == srcNodeID && co._outNodeID == dstNodeID) || 
+				(co._inNodeID == dstNodeID && co._outNodeID == srcNodeID)) {
+				check = false;
+			}
+		}
+		
+		if((_nodes[dstNodeID - 1]._type != NodeGene::Type::SENSOR) &&
+			(srcNodeID != dstNodeID) &&
+			(check)){ 
+			found = true;
+		}
+	}
+
+	_connections.push_back(ConnectionGene(srcNodeID, dstNodeID, 1.0, true, _innovationCounter));
+	_innovationCounter ++;
+	return true;
 }
 
 // TODO
-void Genome::mutateNode() {
+bool Genome::mutateNode() {
+	return true;
 }
 
 void Genome::printGenome() const {

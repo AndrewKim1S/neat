@@ -31,24 +31,29 @@ void visualizeGraph(const Genome &g) {
 
 
 int main(int argc, char** argv){
+	srand((unsigned) time(NULL));
+
 	g_nodeNumber = 1;
 	g_innovationNumber = 1;
 
-	Node n1{1, Node::Type::SENSOR};
-	Node n2{2, Node::Type::SENSOR};
-	Node n3{3, Node::Type::HIDDEN};
+	NodeGene n1{1, 1, NodeGene::Type::SENSOR};
+	NodeGene n2{2, 1, NodeGene::Type::SENSOR};
+	NodeGene n3{3, 2, NodeGene::Type::HIDDEN};
+	NodeGene n4{4, 3, NodeGene::Type::OUTPUT};
 
-	Connection c1{1,3,0.5,true,1};
-	Connection c2{2,3,0.75,true,2};
+	ConnectionGene c1{1,3,0.5,true,1};
+	ConnectionGene c2{3,4,0.75,true,2};
 
 	Genome g;
 	g.addNode(n1);
 	g.addNode(n2);
 	g.addNode(n3);
+	g.addNode(n4);
 	g.addConnection(c1);
 	g.addConnection(c2);
 
-	g.printGenome();
+	g.mutateConnection();
+	//g.printGenome();
 	visualizeGraph(g);
 
 	return 0;
