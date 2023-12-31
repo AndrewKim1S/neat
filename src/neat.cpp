@@ -40,6 +40,10 @@ int main(int argc, char** argv){
 	g_innovationNumber = 1;
 	g_visualizeNumber = 1;
 
+	/* When Constructing the base network manually like so, it is ok to assume
+	 * that the layer numbers (nodes) and innovation numbers for (connections) are
+	 * all correct
+	*/
 	NodeGene n1{1, 1, NodeGene::Type::SENSOR};
 	NodeGene n2{2, 1, NodeGene::Type::SENSOR};
 	NodeGene n3{3, 2, NodeGene::Type::HIDDEN};
@@ -47,6 +51,7 @@ int main(int argc, char** argv){
 
 	ConnectionGene c1{1,3,0.5,true,1};
 	ConnectionGene c2{3,4,0.75,true,2};
+	ConnectionGene c3{2,3,0.6,true,3};
 
 	Genome g;
 	g.addNode(n1);
@@ -55,9 +60,21 @@ int main(int argc, char** argv){
 	g.addNode(n4);
 	g.addConnection(c1);
 	g.addConnection(c2);
+	g.addConnection(c3);
 
+	// Testing
+	std::cout << "Original Network\n";
 	visualizeGraph(g);
-	//g.mutateConnection();
+	g.printGenome();
+	std::cout << "Mutated Node\n";
+	g.mutateNode();
+	g.printGenome();
+	visualizeGraph(g);
+	std::cout << "Mutated Connection\n";
+	g.mutateConnection();
+	visualizeGraph(g);
+	g.printGenome();
+	std::cout << "Mutated Node\n";
 	g.mutateNode();
 	visualizeGraph(g);
 	g.printGenome();

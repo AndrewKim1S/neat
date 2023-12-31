@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <string>
+#include <set>
+#include <map>
 #include "nodeGene.h"
 #include "connectionGene.h"
 
@@ -9,6 +11,12 @@
  * list of node genes in the network
  * list of connection genes 
  */
+
+/*struct NodeGeneCompare {
+	bool operator()(const NodeGene &a, const NodeGene &b) const {
+		return a._id < b._id;
+	}
+};*/
 
 class Genome {
 
@@ -24,10 +32,14 @@ public:
 
 	void printGenome() const;
 
-
+	//std::set<NodeGene, NodeGeneCompare> _nodes;
 	std::vector<NodeGene> _nodes;
 	std::vector<ConnectionGene> _connections;
 
+private:
+	void adjustNodeLayer(int id);
+
+	std::map<int,std::vector<int>> _adjacentNodes;
 	int _innovationCounter;
 };
 	

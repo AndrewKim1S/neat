@@ -1,24 +1,28 @@
 #include "genome.h"
 
-// TODO change _nodes to a set
 
+// Constructor & Destructor
 Genome::Genome() {
 	_innovationCounter = 1;
 }
 
 Genome::~Genome() {}
 
+
+// Utility Functions
 void Genome::addNode(NodeGene &n) {
+	//_nodes.insert(n);
 	_nodes.push_back(n);
 }
 
 void Genome::addConnection(ConnectionGene &c) {
 	_connections.push_back(c);
+	_adjacentNodes[c._inNodeID].push_back(c._outNodeID);
 	_innovationCounter ++;
 }
 
-// TODO
-// check node layer so connections go forward
+
+// Mutations
 bool Genome::mutateConnection() {
 	int srcNodeID;
 	int dstNodeID;
@@ -35,20 +39,21 @@ bool Genome::mutateConnection() {
 			}
 		}
 		
-		// FIXME add layer checking & _nodes access works with sets
 		if((_nodes[dstNodeID - 1]._type != NodeGene::Type::SENSOR) &&
 			(srcNodeID != dstNodeID) &&
+			(_nodes[srcNodeID-1]._layer < _nodes[dstNodeID-1]._layer) &&
 			(check)){ 
 			found = true;
 		}
 	}
+
+	_adjacentNodes[srcNodeID].push_back(dstNodeID);
 
 	_connections.push_back(ConnectionGene(srcNodeID, dstNodeID, 1.0, true, _innovationCounter));
 	_innovationCounter ++;
 	return true;
 }
 
-// TODO
 bool Genome::mutateNode() {
 	int randIndex = 1 + (rand() % _connections.size());
 	int srcNodeID = _connections[randIndex-1]._inNodeID;
@@ -57,7 +62,10 @@ bool Genome::mutateNode() {
 	
 	_connections[randIndex-1]._enabled = false;
 
-	// FIXME change to set
+	// FIXME Need to update node layer number for dstNode & every node after
+	_nodes[dstNodeID-1]._layer++;
+	adjustNodeLayer(dstNodeID-1); // TODO Implement
+	
 	// Add node to list
 	_nodes.push_back(NodeGene
 		(newNodeID, _nodes[srcNodeID-1]._layer + 1, NodeGene::Type::HIDDEN));
@@ -68,10 +76,16 @@ bool Genome::mutateNode() {
 	// create connection from new node to dst
 	_connections.push_back(ConnectionGene
 		(newNodeID, dstNodeID, _connections[randIndex-1]._weight, true, _innovationCounter));
+
+	_adjacentNodes[newNodeID].push_back(dstNodeID);
+	_adjacentNodes[srcNodeID].push_back(newNodeID);
+
 	_innovationCounter ++;
 	return true;
 }
 
+
+// Auxiliary Functions
 void Genome::printGenome() const {
 	std::cout << "Nodes: ";
 	for(auto& n : _nodes) {
@@ -82,6 +96,15 @@ void Genome::printGenome() const {
 		std::cout << c << " ";
 	}
 	std::cout << "\n";
+	std::cout << "Adjacent Nodes\n";
+	for (auto &pair : _adjacentNodes) {
+		int key = pair.first;
+		std::cout << "Key: " << key << "\n";
+		for(int v : pair.second) {
+			std::cout << v << " ";
+		}
+		std::cout << "\n";
+	}
 }
 
 std::string generateDotCode(const Genome &g) {
@@ -90,6 +113,7 @@ std::string generateDotCode(const Genome &g) {
 		dotCode += std::to_string(n._id) + ";\n";
 	}
 	for(auto &c : g._connections) {
+		if(!c._enabled) { continue; }
 		dotCode += std::to_string(c._inNodeID) + "->" +
 			std::to_string(c._outNodeID) + ";\n";
 	}
@@ -99,5 +123,11 @@ std::string generateDotCode(const Genome &g) {
 
 // TODO
 Genome crossover(const Genome &g1, const Genome &g2) {
+
+}
+
+
+// Private Functions
+void Genome::adjustNodeLayer(int id) {
 
 }

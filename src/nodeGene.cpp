@@ -10,6 +10,6 @@ NodeGene::NodeGene(int id, int layer, Type t) {
 }
 
 std::ostream &operator<<(std::ostream &out, const NodeGene n) {
-	out << n._id << "," << n._type << " ";
+	out << n._id << "," << n._layer << " ";
 	return out;
 }
