@@ -6,6 +6,7 @@ CFLAGS += -fsanitize=address -static-libasan
 # Source and Build Directories
 SRCDIR = src
 BUILDDIR = obj
+UTILDIR = util
 
 # Target name
 TARGET = $(BUILDDIR)/a.out
@@ -20,7 +21,11 @@ SRCS = $(wildcard $(SRCDIR)/*.cpp)
 OBJS = $(patsubst $(SRCDIR)/%.cpp,$(BUILDDIR)/%.o,$(SRCS))
 
 # Default target
-all: $(TARGET)
+all: $(UTILDIR) $(TARGET)
+
+# Build empty directory 
+$(UTILDIR):
+	mkdir -p $(UTILDIR)
 
 # Build the target executable
 $(TARGET): $(OBJS)
@@ -35,5 +40,4 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
 .PHONY: clean
 clean:
 	rm -rf $(BUILDDIR)
-	rm *.dot
-	rm *.png
+	rm -rf $(UTILDIR)

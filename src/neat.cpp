@@ -9,11 +9,14 @@
 int g_nodeNumber;
 int g_innovationNumber;
 
+int g_visualizeNumber;
 
-void visualizeGraph(const Genome &g) {
+
+void visualizeGraph(const Genome &g, const std::string dir = "util/") {
 	std::string dotCode = generateDotCode(g);
-	std::string filename = "network.dot";
-	std::ofstream outputFile(filename);
+	std::string dotFilename = dir + "network" + std::to_string(g_visualizeNumber) + ".dot";
+	std::string pngFilename = dir + "output" + std::to_string(g_visualizeNumber) + ".png";
+	std::ofstream outputFile(dotFilename);
 
 	if(!outputFile.is_open()) {
 		std::cout << "Error opening file\n";
@@ -23,10 +26,11 @@ void visualizeGraph(const Genome &g) {
 	outputFile << dotCode;
 	outputFile.close();
 
-	const char* cmd1 = "dot network.dot -Tpng -o output.png";
-	const char* cmd2 = "xdg-open output.png";
-	system(cmd1);
-	system(cmd2);
+	std::string cmd1 = "dot " + dotFilename + " -Tpng -o " + pngFilename;
+	std::string cmd2 = "xdg-open " + pngFilename;
+	system(cmd1.c_str());
+	system(cmd2.c_str());
+	g_visualizeNumber ++;
 }
 
 
@@ -35,6 +39,7 @@ int main(int argc, char** argv){
 
 	g_nodeNumber = 1;
 	g_innovationNumber = 1;
+	g_visualizeNumber = 1;
 
 	NodeGene n1{1, 1, NodeGene::Type::SENSOR};
 	NodeGene n2{2, 1, NodeGene::Type::SENSOR};
@@ -52,9 +57,11 @@ int main(int argc, char** argv){
 	g.addConnection(c1);
 	g.addConnection(c2);
 
-	g.mutateConnection();
-	//g.printGenome();
 	visualizeGraph(g);
+	//g.mutateConnection();
+	g.mutateNode();
+	visualizeGraph(g);
+	//g.printGenome();
 
 	return 0;
 }

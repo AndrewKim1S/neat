@@ -1,5 +1,6 @@
 #include "genome.h"
 
+// TODO change _nodes to a set
 
 Genome::Genome() {
 	_innovationCounter = 1;
@@ -34,6 +35,7 @@ bool Genome::mutateConnection() {
 			}
 		}
 		
+		// FIXME add layer checking & _nodes access works with sets
 		if((_nodes[dstNodeID - 1]._type != NodeGene::Type::SENSOR) &&
 			(srcNodeID != dstNodeID) &&
 			(check)){ 
@@ -48,6 +50,25 @@ bool Genome::mutateConnection() {
 
 // TODO
 bool Genome::mutateNode() {
+	int randIndex = 1 + (rand() % _connections.size());
+	int srcNodeID = _connections[randIndex]._inNodeID;
+	int dstNodeID = _connections[randIndex]._outNodeID;
+	int newNodeID = _nodes.size() + 1;
+	
+	_connections[randIndex]._enabled = false;
+
+	// FIXME change to set
+	// Add node to list
+	_nodes.push_back(NodeGene
+		(newNodeID, _nodes[srcNodeID-1]._layer + 1, NodeGene::Type::HIDDEN));
+	// create connection from src to new node
+	_connections.push_back(ConnectionGene
+		(srcNodeID, newNodeID, 1.0, true, _innovationCounter));
+	_innovationCounter ++;
+	// create connection from new node to dst
+	_connections.push_back(ConnectionGene
+		(newNodeID, dstNodeID, _connections[randIndex]._weight, true, _innovationCounter));
+	_innovationCounter ++;
 	return true;
 }
 
@@ -65,6 +86,9 @@ void Genome::printGenome() const {
 
 std::string generateDotCode(const Genome &g) {
 	std::string dotCode = "digraph Network {\nrankdir=\"LR\"\nnode [shape=\"square\"]\n";
+	for(auto &n : g._nodes) {
+		dotCode += std::to_string(n._id) + ";\n";
+	}
 	for(auto &c : g._connections) {
 		dotCode += std::to_string(c._inNodeID) + "->" +
 			std::to_string(c._outNodeID) + ";\n";
@@ -75,4 +99,5 @@ std::string generateDotCode(const Genome &g) {
 
 // TODO
 Genome crossover(const Genome &g1, const Genome &g2) {
+
 }
