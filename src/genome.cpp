@@ -51,11 +51,11 @@ bool Genome::mutateConnection() {
 // TODO
 bool Genome::mutateNode() {
 	int randIndex = 1 + (rand() % _connections.size());
-	int srcNodeID = _connections[randIndex]._inNodeID;
-	int dstNodeID = _connections[randIndex]._outNodeID;
+	int srcNodeID = _connections[randIndex-1]._inNodeID;
+	int dstNodeID = _connections[randIndex-1]._outNodeID;
 	int newNodeID = _nodes.size() + 1;
 	
-	_connections[randIndex]._enabled = false;
+	_connections[randIndex-1]._enabled = false;
 
 	// FIXME change to set
 	// Add node to list
@@ -67,7 +67,7 @@ bool Genome::mutateNode() {
 	_innovationCounter ++;
 	// create connection from new node to dst
 	_connections.push_back(ConnectionGene
-		(newNodeID, dstNodeID, _connections[randIndex]._weight, true, _innovationCounter));
+		(newNodeID, dstNodeID, _connections[randIndex-1]._weight, true, _innovationCounter));
 	_innovationCounter ++;
 	return true;
 }

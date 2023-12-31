@@ -8,7 +8,6 @@
 // Globals
 int g_nodeNumber;
 int g_innovationNumber;
-
 int g_visualizeNumber;
 
 
@@ -61,7 +60,7 @@ int main(int argc, char** argv){
 	//g.mutateConnection();
 	g.mutateNode();
 	visualizeGraph(g);
-	//g.printGenome();
+	g.printGenome();
 
 	return 0;
 }
