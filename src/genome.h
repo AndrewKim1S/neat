@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <string>
-#include <set>
+#include <stack>
 #include <map>
 #include "nodeGene.h"
 #include "connectionGene.h"
@@ -12,11 +12,9 @@
  * list of connection genes 
  */
 
-/*struct NodeGeneCompare {
-	bool operator()(const NodeGene &a, const NodeGene &b) const {
-		return a._id < b._id;
-	}
-};*/
+/* _nodes holds node by id, index is id decrement by 1
+ * _adjacentNodes holds node id as key, does not need to be decremented
+ */
 
 class Genome {
 

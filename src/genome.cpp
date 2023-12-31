@@ -22,7 +22,7 @@ void Genome::addConnection(ConnectionGene &c) {
 }
 
 
-// Mutations
+// Mutate the genome by adding random connection
 bool Genome::mutateConnection() {
 	int srcNodeID;
 	int dstNodeID;
@@ -54,17 +54,20 @@ bool Genome::mutateConnection() {
 	return true;
 }
 
+// Mutate genome by adding a node
 bool Genome::mutateNode() {
+	// Generate random connection to add node
 	int randIndex = 1 + (rand() % _connections.size());
 	int srcNodeID = _connections[randIndex-1]._inNodeID;
 	int dstNodeID = _connections[randIndex-1]._outNodeID;
 	int newNodeID = _nodes.size() + 1;
-	
+
+	// disable original connection
 	_connections[randIndex-1]._enabled = false;
 
-	// FIXME Need to update node layer number for dstNode & every node after
-	_nodes[dstNodeID-1]._layer++;
-	adjustNodeLayer(dstNodeID-1); // TODO Implement
+	if(!(_nodes[srcNodeID-1]._layer+1 < _nodes[dstNodeID-1]._layer)) {
+		adjustNodeLayer(dstNodeID);
+	}
 	
 	// Add node to list
 	_nodes.push_back(NodeGene
@@ -84,6 +87,30 @@ bool Genome::mutateNode() {
 	return true;
 }
 
+// DFS on the graph to update all layers 
+void Genome::adjustNodeLayer(int id) {
+	// visited array must decrement node id by 1
+	bool visited[_nodes.size()] = {false};
+
+	std::stack<int> stack;
+	stack.push(id);
+
+	while(!stack.empty()) {
+		int currentID = stack.top();
+		stack.pop();
+
+		if(!visited[currentID-1]) {
+			_nodes[currentID-1]._layer++;
+			visited[currentID-1] = true;
+		}
+		for(int neighbor : _adjacentNodes[currentID]) {
+			if(!visited[neighbor-1]) {
+				stack.push(neighbor);
+			}
+		}
+	}
+}
+
 
 // Auxiliary Functions
 void Genome::printGenome() const {
@@ -96,7 +123,7 @@ void Genome::printGenome() const {
 		std::cout << c << " ";
 	}
 	std::cout << "\n";
-	std::cout << "Adjacent Nodes\n";
+	/*std::cout << "Adjacent Nodes\n";
 	for (auto &pair : _adjacentNodes) {
 		int key = pair.first;
 		std::cout << "Key: " << key << "\n";
@@ -104,7 +131,7 @@ void Genome::printGenome() const {
 			std::cout << v << " ";
 		}
 		std::cout << "\n";
-	}
+	}*/
 }
 
 std::string generateDotCode(const Genome &g) {
@@ -121,13 +148,11 @@ std::string generateDotCode(const Genome &g) {
 	return dotCode;
 }
 
+
 // TODO
 Genome crossover(const Genome &g1, const Genome &g2) {
 
 }
 
 
-// Private Functions
-void Genome::adjustNodeLayer(int id) {
 
-}
