@@ -53,31 +53,30 @@ int main(int argc, char** argv){
 	ConnectionGene c2{3,4,0.75,true,2};
 	ConnectionGene c3{2,3,0.6,true,3};
 
-	Genome g;
-	g.addNode(n1);
-	g.addNode(n2);
-	g.addNode(n3);
-	g.addNode(n4);
-	g.addConnection(c1);
-	g.addConnection(c2);
-	g.addConnection(c3);
-
-	// Testing
+	Genome test;
+	test.addNode(1,1,NodeGene::Type::SENSOR);
+	test.addNode(2,1,NodeGene::Type::SENSOR);
+	test.addNode(3,2,NodeGene::Type::HIDDEN);
+	test.addNode(4,3,NodeGene::Type::OUTPUT);
+	test.addConnection(1,3,0.5,true,1);
+	test.addConnection(3,4,0.7,true,2);
+	test.addConnection(2,3,0.6,true,3);
+	
 	std::cout << "Original Network\n";
-	visualizeGraph(g);
-	g.printGenome();
+	visualizeGraph(test);
+	test.printGenome();
 	std::cout << "Mutated Node\n";
-	g.mutateNode();
-	g.printGenome();
-	visualizeGraph(g);
+	test.mutateNode();
+	test.printGenome();
+	visualizeGraph(test);
 	std::cout << "Mutated Connection\n";
-	g.mutateConnection();
-	visualizeGraph(g);
-	g.printGenome();
+	test.mutateConnection();
+	visualizeGraph(test);
+	test.printGenome();
 	std::cout << "Mutated Node\n";
-	g.mutateNode();
-	visualizeGraph(g);
-	g.printGenome();
+	test.mutateNode();
+	visualizeGraph(test);
+	test.printGenome();
 
 	return 0;
 }

@@ -22,17 +22,16 @@ public:
 	Genome();
 	~Genome();
 
-	void addNode(NodeGene &n);
-	void addConnection(ConnectionGene &c);
+	void addNode(int id, int layer, NodeGene::Type type);
+	void addConnection(int in, int out, double weight, bool enabled, int inno);
 
 	bool mutateConnection();
 	bool mutateNode();
 
 	void printGenome() const;
 
-	//std::set<NodeGene, NodeGeneCompare> _nodes;
-	std::vector<NodeGene> _nodes;
-	std::vector<ConnectionGene> _connections;
+	std::vector<NodeGene*> _nodes;
+	std::vector<ConnectionGene*> _connections;
 
 private:
 	void adjustNodeLayer(int id);
