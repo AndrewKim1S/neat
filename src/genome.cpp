@@ -6,6 +6,10 @@ Genome::Genome() {
 	_innovationCounter = 1;
 }
 
+Genome::Genome(std::vector<NodeGene*>& nodes, 
+	std::vector<ConnectionGene*>& connections) : 
+	_nodes(nodes), _connections(connections) {}
+
 Genome::~Genome() {
 	for(auto &n : _nodes) {
 		delete n;
@@ -32,7 +36,7 @@ void Genome::addConnection(int in, int out, double weight, bool enabled,
 
 
 // Mutate the genome by adding random connection
-bool Genome::mutateConnection() {
+ConnectionGene* Genome::mutateConnection() {
 	int srcNodeID;
 	int dstNodeID;
 	bool found = false;
@@ -60,11 +64,11 @@ bool Genome::mutateConnection() {
 	ConnectionGene *newc = new ConnectionGene(srcNodeID, dstNodeID, 1.0, true, _innovationCounter);
 	_connections.push_back(newc);
 	_innovationCounter ++;
-	return true;
+	return newc;
 }
 
 // Mutate genome by adding a node
-bool Genome::mutateNode() {
+std::pair<ConnectionGene*, ConnectionGene*> Genome::mutateNode() {
 	// Generate random connection to add node
 	int randIndex = 1 + (rand() % _connections.size());
 	int srcNodeID = _connections[randIndex-1]->_inNodeID;
@@ -93,7 +97,7 @@ bool Genome::mutateNode() {
 	_adjacentNodes[srcNodeID].push_back(newNodeID);
 
 	_innovationCounter ++;
-	return true;
+	return std::pair<ConnectionGene*, ConnectionGene*>(newc1, newc2);
 }
 
 // DFS on the graph to update all layers 
@@ -158,9 +162,104 @@ std::string generateDotCode(const Genome &g) {
 }
 
 
-// TODO
-Genome crossover(const Genome &g1, const Genome &g2) {
+// TODO WORK IN PROGRESS
+// Preset chance that disabled genes become enabled again
+// track nodes
+// Repetetive code into lamda
+Genome crossover(Genome &g1, Genome &g2) {
+	//int g1Size = g1._connections.size()-1;
+	//int g2Size = g2._connections.size()-1;
 
+	int totalNumberInn = std::max(g1.getInnCounter(), g2.getInnCounter());
+
+	// visited array must decrement node id by 1
+	bool visited[std::max(g1._nodes.size(), g2._nodes.size())] = {false};
+
+	std::vector<ConnectionGene*> newConnections;
+	std::vector<NodeGene*> newNodes; 
+
+	// Lamda function for binary search
+	auto findConnection = [](std::vector<ConnectionGene*> &list, int inn){
+		int low = 0;
+		int high = list.size()-1;
+		while(low <= high) {
+			int mid = low + (high - low)/2;
+			if(list[mid]->_innovationNumber == inn) {
+				return mid;
+			} else if (list[mid]->_innovationNumber < inn) {
+				low = mid+1;
+			} else {
+				high = mid-1;
+			}
+		}
+		return -1;
+	};
+
+	// List to keep track of disjoint and excess genes
+	std::vector<int> g1DisjointExcessIndexes;
+	std::vector<int> g2DisjointExcessIndexes;
+
+	// Binary search on both genomes
+	for(int i = 1; i < totalNumberInn; ++i){
+		int g1Index = findConnection(g1._connections, i);
+		int g2Index = findConnection(g2._connections, i);
+
+		// Matching genes
+		if((g1Index != -1) && (g2Index != -1)) {
+			ConnectionGene* newc;
+			Genome* chosen;
+			if(rand() % 1 == 0) {
+				chosen = &g1;
+				newc = new ConnectionGene(*g1._connections[g1Index]);
+			} else {
+				chosen = &g2;
+				newc = new ConnectionGene(*g2._connections[g2Index]);
+			}
+			newConnections.push_back(newc);
+
+			// Keep track of nodes
+			int src = newc->_inNodeID;
+			if(!visited[src-1]) {
+				NodeGene* newn = new NodeGene(*chosen->_nodes[src-1]);
+				newNodes.push_back(newn);
+			}
+			int dst = newc->_outNodeID;
+			if(!visited[dst-1]) {
+				NodeGene* newn = new NodeGene(*chosen->_nodes[dst-1]);
+				newNodes.push_back(newn);
+			}
+		} 
+		
+		// Disjoint or excess genes
+		else if((g1Index != 1) && (g2Index == -1)){
+			g1DisjointExcessIndexes.push_back(g1Index);
+		}
+		else if((g2Index != 1) && (g1Index == -1)){
+			g2DisjointExcessIndexes.push_back(g2Index);
+		}
+	}
+
+	// Check fitness of genomes & add rest of connections
+	if(g1._fitness > g2._fitness) {
+		for(auto &c : g1DisjointExcessIndexes) {
+			ConnectionGene* newc = new ConnectionGene(
+				*g1._connections[g1DisjointExcessIndexes[c]]);
+			newConnections.push_back(newc);
+		}
+	} else if (g2._fitness > g1._fitness) {
+		for(auto &c : g2DisjointExcessIndexes) {
+			ConnectionGene* newc = new ConnectionGene(
+				*g2._connections[g2DisjointExcessIndexes[c]]);
+			newConnections.push_back(newc);
+		}
+	} else {
+
+	}
+
+	// Sort the connections & nodes lists
+
+	// TODO must give offspring the new vectors and everything
+	return Genome(newNodes, newConnections);
 }
 
 

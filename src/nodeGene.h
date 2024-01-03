@@ -18,6 +18,7 @@ public:
 
 	NodeGene();
 	NodeGene(int id, int layer, Type t);
+	NodeGene(const NodeGene &n);
 
 	friend std::ostream &operator<<(std::ostream &out, const NodeGene n);
 

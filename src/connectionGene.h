@@ -15,6 +15,7 @@ public:
 	ConnectionGene();
 	ConnectionGene(int in, int out, double weight,
 		bool enabled, int inn);
+	ConnectionGene(const ConnectionGene &c);
 
 	friend std::ostream &operator<<(std::ostream &out, const ConnectionGene &c);
 	

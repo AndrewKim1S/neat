@@ -8,8 +8,8 @@
 #include "connectionGene.h"
 
 /* Genome class - It is the genotype of the neural network
- * list of node genes in the network
- * list of connection genes 
+ * list of node genes in the network (sorted by id)
+ * list of connection genes (sorted by innovation number)
  */
 
 /* _nodes holds node by id, index is id decrement by 1
@@ -20,18 +20,24 @@ class Genome {
 
 public:
 	Genome();
+	Genome(std::vector<NodeGene*>& nodes, 
+		std::vector<ConnectionGene*>& connections);
 	~Genome();
 
 	void addNode(int id, int layer, NodeGene::Type type);
 	void addConnection(int in, int out, double weight, bool enabled, int inno);
 
-	bool mutateConnection();
-	bool mutateNode();
+	ConnectionGene* mutateConnection();
+	std::pair<ConnectionGene*, ConnectionGene*> mutateNode();
 
 	void printGenome() const;
 
+	int getInnCounter() { return _innovationCounter; }
+
 	std::vector<NodeGene*> _nodes;
 	std::vector<ConnectionGene*> _connections;
+
+	double _fitness;
 
 private:
 	void adjustNodeLayer(int id);
@@ -41,4 +47,4 @@ private:
 };
 	
 std::string generateDotCode(const Genome &g);
-Genome crossover(const Genome &g1, const Genome &g2);
+Genome crossover(Genome &g1, Genome &g2);

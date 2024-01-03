@@ -44,14 +44,6 @@ int main(int argc, char** argv){
 	 * that the layer numbers (nodes) and innovation numbers for (connections) are
 	 * all correct
 	*/
-	NodeGene n1{1, 1, NodeGene::Type::SENSOR};
-	NodeGene n2{2, 1, NodeGene::Type::SENSOR};
-	NodeGene n3{3, 2, NodeGene::Type::HIDDEN};
-	NodeGene n4{4, 3, NodeGene::Type::OUTPUT};
-
-	ConnectionGene c1{1,3,0.5,true,1};
-	ConnectionGene c2{3,4,0.75,true,2};
-	ConnectionGene c3{2,3,0.6,true,3};
 
 	Genome test;
 	test.addNode(1,1,NodeGene::Type::SENSOR);
@@ -61,11 +53,18 @@ int main(int argc, char** argv){
 	test.addConnection(1,3,0.5,true,1);
 	test.addConnection(3,4,0.7,true,2);
 	test.addConnection(2,3,0.6,true,3);
-	
-	std::cout << "Original Network\n";
+
+	Genome test2;
+
+	std::cout << "Original Network test 1\n";
 	visualizeGraph(test);
 	test.printGenome();
-	std::cout << "Mutated Node\n";
+	
+	std::cout << "Original Network test 2\n";
+	visualizeGraph(test2);
+	test2.printGenome();
+	
+	/*std::cout << "Mutated Node\n";
 	test.mutateNode();
 	test.printGenome();
 	visualizeGraph(test);
@@ -76,7 +75,9 @@ int main(int argc, char** argv){
 	std::cout << "Mutated Node\n";
 	test.mutateNode();
 	visualizeGraph(test);
-	test.printGenome();
+	test.printGenome();*/
+
+	//crossover(test, test2);
 
 	return 0;
 }
