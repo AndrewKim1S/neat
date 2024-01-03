@@ -208,7 +208,7 @@ Genome crossover(Genome &g1, Genome &g2) {
 		if((g1Index != -1) && (g2Index != -1)) {
 			ConnectionGene* newc;
 			Genome* chosen;
-			if(rand() % 1 == 0) {
+			if(rand() % 2 == 0) {
 				chosen = &g1;
 				newc = new ConnectionGene(*g1._connections[g1Index]);
 			} else {
@@ -243,13 +243,13 @@ Genome crossover(Genome &g1, Genome &g2) {
 	if(g1._fitness > g2._fitness) {
 		for(auto &c : g1DisjointExcessIndexes) {
 			ConnectionGene* newc = new ConnectionGene(
-				*g1._connections[g1DisjointExcessIndexes[c]]);
+				*g1._connections[c]);
 			newConnections.push_back(newc);
 		}
 	} else if (g2._fitness > g1._fitness) {
 		for(auto &c : g2DisjointExcessIndexes) {
 			ConnectionGene* newc = new ConnectionGene(
-				*g2._connections[g2DisjointExcessIndexes[c]]);
+				*g2._connections[c]);
 			newConnections.push_back(newc);
 		}
 	} else {
@@ -258,7 +258,6 @@ Genome crossover(Genome &g1, Genome &g2) {
 
 	// Sort the connections & nodes lists
 
-	// TODO must give offspring the new vectors and everything
 	return Genome(newNodes, newConnections);
 }
 
