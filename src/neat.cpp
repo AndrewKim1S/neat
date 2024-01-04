@@ -45,6 +45,7 @@ int main(int argc, char** argv){
 	 * all correct
 	*/
 
+	// MAKE SURE THAT INNOVATIONS FOR DIFFERENT GENOMES ARE SORTED ACCORDINGLY
 	Genome test;
 	test.addNode(1,1,NodeGene::Type::SENSOR);
 	test.addNode(2,1,NodeGene::Type::SENSOR);
@@ -71,6 +72,7 @@ int main(int argc, char** argv){
 	test.printGenome();
 	visualizeGraph(test);
 	
+	test2._innovationCounter = 6;
 	std::cout << "Original Network test 2\n";
 	test2.mutateConnection();
 	test2.printGenome();

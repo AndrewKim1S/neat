@@ -61,11 +61,13 @@ ConnectionGene* Genome::mutateConnection() {
 	}
 
 	_adjacentNodes[srcNodeID].push_back(dstNodeID);
-	ConnectionGene *newc = new ConnectionGene(srcNodeID, dstNodeID, 1.0, true, _innovationCounter);
+	ConnectionGene *newc = new ConnectionGene(srcNodeID, dstNodeID, 1.0, true,
+		_innovationCounter);
 	_connections.push_back(newc);
 	_innovationCounter ++;
 	return newc;
 }
+
 
 // Mutate genome by adding a node
 std::pair<ConnectionGene*, ConnectionGene*> Genome::mutateNode() {
@@ -83,14 +85,19 @@ std::pair<ConnectionGene*, ConnectionGene*> Genome::mutateNode() {
 	}
 	
 	// Add node to list
-	NodeGene *newn = new NodeGene(newNodeID, _nodes[srcNodeID-1]->_layer + 1, NodeGene::Type::HIDDEN);
+	NodeGene *newn = new NodeGene(newNodeID, _nodes[srcNodeID-1]->_layer + 1, 
+		NodeGene::Type::HIDDEN);
 	_nodes.push_back(newn);
+
 	// create connection from src to new node
-	ConnectionGene *newc1 = new ConnectionGene(srcNodeID, newNodeID, 1.0, true, _innovationCounter);
+	ConnectionGene *newc1 = new ConnectionGene(srcNodeID, newNodeID, 1.0, true, 
+		_innovationCounter);
 	_connections.push_back(newc1);
 	_innovationCounter ++;
+
 	// create connection from new node to dst
-	ConnectionGene *newc2 = new ConnectionGene(newNodeID, dstNodeID, _connections[randIndex-1]->_weight, true, _innovationCounter);
+	ConnectionGene *newc2 = new ConnectionGene(newNodeID, dstNodeID, 
+		_connections[randIndex-1]->_weight, true, _innovationCounter);
 	_connections.push_back(newc2);
 
 	_adjacentNodes[newNodeID].push_back(dstNodeID);
@@ -99,6 +106,7 @@ std::pair<ConnectionGene*, ConnectionGene*> Genome::mutateNode() {
 	_innovationCounter ++;
 	return std::pair<ConnectionGene*, ConnectionGene*>(newc1, newc2);
 }
+
 
 // DFS on the graph to update all layers 
 void Genome::adjustNodeLayer(int id) {
@@ -164,13 +172,9 @@ std::string generateDotCode(const Genome &g) {
 
 // TODO WORK IN PROGRESS
 // Preset chance that disabled genes become enabled again
-// track nodes
-// Repetetive code into lamda
+// Remove false connections
 Genome crossover(Genome &g1, Genome &g2) {
-	//int g1Size = g1._connections.size()-1;
-	//int g2Size = g2._connections.size()-1;
-
-	int totalNumberInn = std::max(g1.getInnCounter(), g2.getInnCounter());
+	int totalNumberInn = std::max(g1._innovationCounter, g2._innovationCounter);
 
 	// visited array must decrement node id by 1
 	bool visited[std::max(g1._nodes.size(), g2._nodes.size())] = {false};
@@ -178,7 +182,7 @@ Genome crossover(Genome &g1, Genome &g2) {
 	std::vector<ConnectionGene*> newConnections;
 	std::vector<NodeGene*> newNodes; 
 
-	// Lamda function for binary search
+	// Lambda function for binary search
 	auto findConnection = [](std::vector<ConnectionGene*> &list, int inn){
 		int low = 0;
 		int high = list.size()-1;
@@ -239,27 +243,85 @@ Genome crossover(Genome &g1, Genome &g2) {
 		}
 	}
 
+	// Lambda TODO WIP!
+	auto addAllConnections = [&](Genome &g, std::vector<int> &indexes){
+		for(auto &c : indexes) {
+			ConnectionGene* newc = new ConnectionGene(
+				*g._connections[c]);
+			newConnections.push_back(newc);
+			// Keep track of nodes
+			int src = newc->_inNodeID;
+			if(!visited[src-1]) {
+				NodeGene* newn = new NodeGene(*g._nodes[src-1]);
+				newNodes.push_back(newn);
+			}
+			int dst = newc->_outNodeID;
+			if(!visited[dst-1]) {
+				NodeGene* newn = new NodeGene(*g._nodes[dst-1]);
+				newNodes.push_back(newn);
+			}
+		}
+	};
+
+	// TODO WIP
 	// Check fitness of genomes & add rest of connections
 	if(g1._fitness > g2._fitness) {
-		for(auto &c : g1DisjointExcessIndexes) {
+		// g1 is more fit
+		/*for(auto &c : g1DisjointExcessIndexes) {
 			ConnectionGene* newc = new ConnectionGene(
 				*g1._connections[c]);
 			newConnections.push_back(newc);
-		}
+			// Keep track of nodes
+			int src = newc->_inNodeID;
+			if(!visited[src-1]) {
+				NodeGene* newn = new NodeGene(*g1._nodes[src-1]);
+				newNodes.push_back(newn);
+			}
+			int dst = newc->_outNodeID;
+			if(!visited[dst-1]) {
+				NodeGene* newn = new NodeGene(*g1._nodes[dst-1]);
+				newNodes.push_back(newn);
+			}
+		}*/
+
 	} else if (g2._fitness > g1._fitness) {
+		// g2 is more fit
 		for(auto &c : g2DisjointExcessIndexes) {
 			ConnectionGene* newc = new ConnectionGene(
 				*g2._connections[c]);
 			newConnections.push_back(newc);
+			
+			// Keep track of nodes
+			int src = newc->_inNodeID;
+			if(!visited[src-1]) {
+				NodeGene* newn = new NodeGene(*g2._nodes[src-1]);
+				newNodes.push_back(newn);
+			}
+			int dst = newc->_outNodeID;
+			if(!visited[dst-1]) {
+				NodeGene* newn = new NodeGene(*g2._nodes[dst-1]);
+				newNodes.push_back(newn);
+			}
 		}
+
 	} else {
+		// g1 and g2 are equally fit
+		// TODO
 
 	}
 
-	// Sort the connections & nodes lists
+	// Sort the connections by innovation number & nodes lists by id
+	std::sort(newNodes.begin(), newNodes.end(), 
+		[](const NodeGene* a, const NodeGene* b) {
+		return a->_id < b->_id;
+	});
+	
+	std::sort(newConnections.begin(), newConnections.end(), 
+		[](const ConnectionGene* a, const ConnectionGene* b) {
+		return a->_innovationNumber < b->_innovationNumber;
+	});
 
 	return Genome(newNodes, newConnections);
 }
-
 
 

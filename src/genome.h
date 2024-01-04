@@ -4,6 +4,7 @@
 #include <string>
 #include <stack>
 #include <map>
+#include <algorithm>
 #include "nodeGene.h"
 #include "connectionGene.h"
 
@@ -32,19 +33,21 @@ public:
 
 	void printGenome() const;
 
-	int getInnCounter() { return _innovationCounter; }
+	//int getInnCounter() { return _innovationCounter; }
 
 	std::vector<NodeGene*> _nodes;
 	std::vector<ConnectionGene*> _connections;
 
 	double _fitness;
 
+	int _innovationCounter;
+
 private:
 	void adjustNodeLayer(int id);
 
 	std::map<int,std::vector<int>> _adjacentNodes;
-	int _innovationCounter;
 };
 	
+
 std::string generateDotCode(const Genome &g);
 Genome crossover(Genome &g1, Genome &g2);
