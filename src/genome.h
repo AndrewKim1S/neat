@@ -10,7 +10,7 @@
 
 /* Genome class - It is the genotype of the neural network
  * list of node genes in the network (sorted by id)
- * list of connection genes (sorted by innovation number)
+ *list of connection genes (sorted by innovation number)
  */
 
 /* _nodes holds node by id, index is id decrement by 1
@@ -32,8 +32,6 @@ public:
 	std::pair<ConnectionGene*, ConnectionGene*> mutateNode();
 
 	void printGenome() const;
-
-	//int getInnCounter() { return _innovationCounter; }
 
 	std::vector<NodeGene*> _nodes;
 	std::vector<ConnectionGene*> _connections;

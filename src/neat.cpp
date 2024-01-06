@@ -1,6 +1,8 @@
 #include <cstdlib>
 #include <fstream>
+
 #include "genome.h"
+#include "network.h"
 //#include <graphviz/gvc.h>
 //#include <graphviz/cgraph.h>
 
@@ -67,16 +69,18 @@ int main(int argc, char** argv){
 	test._fitness = 1;
 	test2._fitness = 2;
 
-	std::cout << "Original Network test 1\n";
+	// Genome test
+
+	std::cout << "Original Genome test 1\n";
 	test.mutateNode();
 	test.printGenome();
 	visualizeGraph(test);
 	
-	test2._innovationCounter = 6;
+	/*test2._innovationCounter = 6;
 	std::cout << "Original Network test 2\n";
 	test2.mutateConnection();
 	test2.printGenome();
-	visualizeGraph(test2);
+	visualizeGraph(test2);*/
 	
 	/*std::cout << "Mutated Node\n";
 	test.mutateNode();
@@ -91,10 +95,16 @@ int main(int argc, char** argv){
 	visualizeGraph(test);
 	test.printGenome();*/
 
+	/*
 	Genome result = crossover(test, test2);
 	std::cout << "Crossover result\n";
 	visualizeGraph(result);
-	result.printGenome();
+	result.printGenome();*/
+
+	// Neural Network test
+	Network networkTest = Network(test);
+	std::cout << "Original Network test\n";
+	std::cout << networkTest;
 
 	return 0;
 }

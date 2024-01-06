@@ -266,6 +266,7 @@ Genome crossover(Genome &g1, Genome &g2) {
 	// TODO WIP
 	// Check fitness of genomes & add rest of connections
 	if(g1._fitness > g2._fitness) {
+		addAllConnections(g1, g1DisjointExcessIndexes);
 		// g1 is more fit
 		/*for(auto &c : g1DisjointExcessIndexes) {
 			ConnectionGene* newc = new ConnectionGene(
@@ -285,8 +286,9 @@ Genome crossover(Genome &g1, Genome &g2) {
 		}*/
 
 	} else if (g2._fitness > g1._fitness) {
+		addAllConnections(g2, g2DisjointExcessIndexes);
 		// g2 is more fit
-		for(auto &c : g2DisjointExcessIndexes) {
+		/*for(auto &c : g2DisjointExcessIndexes) {
 			ConnectionGene* newc = new ConnectionGene(
 				*g2._connections[c]);
 			newConnections.push_back(newc);
@@ -302,7 +304,7 @@ Genome crossover(Genome &g1, Genome &g2) {
 				NodeGene* newn = new NodeGene(*g2._nodes[dst-1]);
 				newNodes.push_back(newn);
 			}
-		}
+		}*/
 
 	} else {
 		// g1 and g2 are equally fit
