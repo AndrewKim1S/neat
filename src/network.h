@@ -2,7 +2,9 @@
 
 #include "genome.h"
 
-/*
+/* Network class - contains neural network that is based off of genotype of 
+ * the network.
+ * 
  */
 
 class Network {
@@ -16,18 +18,17 @@ class Network {
 		double _output;
 		double _gradient;
 
-		private:
-			static double activationFunction(double x) {
-				return 0;
-			}
+		static double activationFunction(double x) {
+			return x;
+		}
 
-			static double activationFunctionDerivative(double x) {
-				return 0;
-			}
+		static double activationFunctionDerivative(double x) {
+			return 0;
+		}
 	};
 
-	typedef std::vector<Neuron> Layer;
-	typedef std::pair<size_t, size_t> Connection;
+	typedef std::vector<Neuron*> Layer;
+	typedef std::pair<int, int> Connection;
 
 public:
 	Network();
@@ -48,7 +49,16 @@ private:
 	std::vector<Layer> _network;
 	std::map<Connection, double> _weights;
 
+	// index is node vector holds input nodes
+	std::map<int, std::vector<int>> _fwdAdjacent; 
+	// index is node vector holds output nodes
+	std::map<int, std::vector<int>> _bckAdjacent;
+
+	// helper table of neurons
+	std::map<int, Neuron*> _lookupHelper;
+
 	double _learningRate = 0.1;
+
 };
 
 

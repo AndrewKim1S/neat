@@ -106,6 +106,10 @@ int main(int argc, char** argv){
 	std::cout << "Original Network test\n";
 	std::cout << networkTest;
 
+	std::cout << "Feed Forward test\n";
+	networkTest.feedForward({2,2});
+	std::cout << networkTest;
+
 	return 0;
 }
 
