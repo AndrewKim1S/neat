@@ -15,8 +15,10 @@ int g_visualizeNumber;
 
 void visualizeGraph(const Genome &g, const std::string dir = "util/") {
 	std::string dotCode = generateDotCode(g);
-	std::string dotFilename = dir + "network" + std::to_string(g_visualizeNumber) + ".dot";
-	std::string pngFilename = dir + "output" + std::to_string(g_visualizeNumber) + ".png";
+	std::string dotFilename = dir + "network" + 
+		std::to_string(g_visualizeNumber) + ".dot";
+	std::string pngFilename = dir + "output" + 
+		std::to_string(g_visualizeNumber) + ".png";
 	std::ofstream outputFile(dotFilename);
 
 	if(!outputFile.is_open()) {
@@ -109,6 +111,13 @@ int main(int argc, char** argv){
 	std::cout << "Feed Forward test\n";
 	networkTest.feedForward({2,2});
 	std::cout << networkTest;
+
+	std::cout << "Output\n";
+	auto output = networkTest.getOutputs();
+	for(double x : output) {
+		std::cout << x << " ";
+	}
+	std::cout << "\n";
 
 	return 0;
 }

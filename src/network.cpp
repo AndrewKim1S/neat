@@ -43,7 +43,7 @@ void Network::feedForward(const std::vector<double> &inputs) {
 			double summation = 0;
 			// Calculate the summation for each neuron 
 			for(auto &k : _fwdAdjacent[n->_id]) {
-				Connection c{n->_id, k};
+				Connection c{k, n->_id};
 				summation += _weights[c] * _lookupHelper[k]->_output;
 			}
 			// Set the neuron output 
@@ -54,6 +54,16 @@ void Network::feedForward(const std::vector<double> &inputs) {
 
 void Network::backPropogation(const std::vector<double> &targets) {
 
+}
+
+
+// TODO may need to fix as all of the outputs may not be in the last layer
+std::vector<double> Network::getOutputs() {
+	std::vector<double> outputs;
+	for(size_t i = 0; i < _network[_network.size()-1].size(); ++i) {
+		outputs.push_back(_network[_network.size()-1][i]->_output);
+	}
+	return outputs;
 }
 
 
