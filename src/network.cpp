@@ -4,6 +4,7 @@
 Network::Network() {}
 
 Network::Network(Genome &g) {
+	_numLayers = 0;
 	// Add genome connection genes as weights
 	for(auto &c : g._connections) {
 		if(c->_enabled) {
@@ -15,11 +16,18 @@ Network::Network(Genome &g) {
 	}
 	// Add genome node genes as nodes
 	for(auto &n : g._nodes) {
-		if(n->_layer >= int(_network.size())) { _network.push_back({}); }
+		if(n->_layer >= int(_network.size())) { 
+			_network.push_back({}); 
+			_numLayers++;
+		}
 		Neuron *neuron = new Neuron(n->_id);
 		_network[n->_layer-1].push_back(neuron);
 		_lookupHelper[n->_id] = neuron;
+		if(n->_type == NodeGene::Type::OUTPUT) {
+			_outputHelper.push_back(neuron);
+		}
 	}
+	// TODO sort the neuron outputs by their id
 }
 
 Network::~Network() {
@@ -47,21 +55,78 @@ void Network::feedForward(const std::vector<double> &inputs) {
 				summation += _weights[c] * _lookupHelper[k]->_output;
 			}
 			// Set the neuron output 
-			n->_output = Network::Neuron::activationFunction(summation);
+			n->_output = Network::Neuron::activationFunction(summation + n->_bias);
 		}
 	}
 }
 
-void Network::backPropogation(const std::vector<double> &targets) {
 
+// Backpropogation TODO
+// Assumes that targets parameter vector is ordered in the same way as 
+// layer output
+void Network::backPropogation(const std::vector<double> &targets) {
+	// Backpropogate error to all neurons
+	// reverse traverse the layers from output to input
+	for(int i = _numLayers-1; i >= 0; i--) {
+		Layer current = _network[i];
+		
+		// iterate through every neuron in the layer
+		for(size_t n = 0; n < current.size(); ++n) {
+			double error = 0.0;
+			
+			// calculate error for output 
+			if(i == _numLayers-1) {
+				// TODO may need fixing
+				error = targets[n] - current[n]->_output;
+			} 
+
+			// calculate error for hidden
+			else {
+				// get all the connections that lead out of node
+				for(auto &j : _bckAdjacent[current[n]->_id]) {
+					// Define weight connection 
+					Connection c{current[n]->_id, j};
+					error += (_weights[c] * _lookupHelper[j]->_error);
+				}
+			}
+			// set the error for each neuron
+			current[n]->_error = error * 
+				Neuron::activationFunctionDerivative(current[n]->_output);
+		}
+	}
+
+	// Update weights of network
+	for(int i = 0; i < _numLayers; i++) {
+		Layer current = _network[i];
+		// input layer only is different
+		if(i == 0) {
+
+		}
+		for(auto &n : current) {
+			// update weights x -> n
+			for(auto &j : _fwdAdjacent[n->_id]) {
+				Connection c{j, n->_id};
+				_weights[c] += _learningRate * 
+					_lookupHelper[n->_id]->_error * 
+					_lookupHelper[j]->_output;
+				// FIXME
+				/*std::cout << j << ": ";
+				std::cout << _learningRate << ", ";
+				std::cout << _lookupHelper[n->_id]->_error << ", ";
+				std::cout << _lookupHelper[j]->_output << std::endl;
+			*/}
+			// update bias
+			_lookupHelper[n->_id]->_bias += _learningRate * 
+				_lookupHelper[n->_id]->_error;
+		}
+	}
 }
 
 
-// TODO may need to fix as all of the outputs may not be in the last layer
 std::vector<double> Network::getOutputs() {
 	std::vector<double> outputs;
-	for(size_t i = 0; i < _network[_network.size()-1].size(); ++i) {
-		outputs.push_back(_network[_network.size()-1][i]->_output);
+	for(size_t i = 0; i < _outputHelper.size(); ++i) {
+		outputs.push_back(_outputHelper[i]->_output);
 	}
 	return outputs;
 }
@@ -82,3 +147,5 @@ std::ostream &operator<<(std::ostream &out, const Network &n) {
 	}
 	return out;
 }
+
+

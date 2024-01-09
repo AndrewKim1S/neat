@@ -103,14 +103,19 @@ int main(int argc, char** argv){
 	visualizeGraph(result);
 	result.printGenome();*/
 
+	// This is tentative testing of neural net
 	// Neural Network test
 	Network networkTest = Network(test);
-	std::cout << "Original Network test\n";
+	std::cout << "Original Network\n";
 	std::cout << networkTest;
 
-	std::cout << "Feed Forward test\n";
-	networkTest.feedForward({2,2});
+	std::cout << "Test fwd & back propogation -------\n";
+	for(int i = 0; i < 100; ++i) {
+		networkTest.feedForward({2,2});
+		networkTest.backPropogation({5});
+	}
 	std::cout << networkTest;
+	networkTest.feedForward({2,2});
 
 	std::cout << "Output\n";
 	auto output = networkTest.getOutputs();
@@ -118,7 +123,7 @@ int main(int argc, char** argv){
 		std::cout << x << " ";
 	}
 	std::cout << "\n";
-
+	
 	return 0;
 }
 

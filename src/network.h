@@ -4,7 +4,7 @@
 
 /* Network class - contains neural network that is based off of genotype of 
  * the network.
- * 
+ * Important note: The inputs and the outputs of the network are constant
  */
 
 class Network {
@@ -17,13 +17,19 @@ class Network {
 		double _bias;
 		double _output;
 		double _gradient;
+		double _error;
 
+		// ReLu 
 		static double activationFunction(double x) {
-			return x;
+			return std::max(0.0, x);
 		}
 
 		static double activationFunctionDerivative(double x) {
-			return 0;
+			if(x < 0) {
+				return 0.0;
+			} else {
+				return 1.0;
+			}
 		}
 	};
 
@@ -35,6 +41,7 @@ public:
 	Network(Genome &g);
 	~Network();
 
+	// Both input & target vectors must be sorted by id
 	void feedForward(const std::vector<double> &inputs);
 	void backPropogation(const std::vector<double> &targets);
 
@@ -43,7 +50,7 @@ public:
 	friend std::ostream &operator<<(std::ostream &out, const Network &n);
 
 private:
-	size_t _numLayers;
+	int _numLayers;
 	size_t _numNuerons;
 
 	std::vector<Layer> _network;
@@ -57,7 +64,10 @@ private:
 	// helper table of neurons
 	std::map<int, Neuron*> _lookupHelper;
 
-	double _learningRate = 0.1;
+	// helper list of output neurons
+	std::vector<Neuron*> _outputHelper;
+
+	double _learningRate = 0.3;
 
 };
 
