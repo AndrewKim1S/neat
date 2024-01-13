@@ -16,8 +16,8 @@ Network::Network(Genome &g) {
 	}
 	// Add genome node genes as nodes
 	for(auto &n : g._nodes) {
-		if(n->_layer >= int(_network.size())) { 
-			_network.push_back({}); 
+		if(n->_layer > int(_network.size())) { 
+			_network.push_back({});
 			_numLayers++;
 		}
 		Neuron *neuron = new Neuron(n->_id);
@@ -69,11 +69,11 @@ void Network::backPropogation(const std::vector<double> &targets) {
 	// reverse traverse the layers from output to input
 	for(int i = _numLayers-1; i >= 0; i--) {
 		Layer current = _network[i];
-		
+	
 		// iterate through every neuron in the layer
 		for(size_t n = 0; n < current.size(); ++n) {
 			double error = 0.0;
-			
+		
 			// calculate error for output 
 			if(i == _numLayers-1) {
 				// TODO may need fixing
@@ -110,11 +110,13 @@ void Network::backPropogation(const std::vector<double> &targets) {
 					_lookupHelper[n->_id]->_error * 
 					_lookupHelper[j]->_output;
 				// FIXME
-				/*std::cout << j << ": ";
+				/*std::cout << "--------\n";
+				std::cout << j << ": ";
 				std::cout << _learningRate << ", ";
 				std::cout << _lookupHelper[n->_id]->_error << ", ";
 				std::cout << _lookupHelper[j]->_output << std::endl;
-			*/}
+			*/
+			}
 			// update bias
 			_lookupHelper[n->_id]->_bias += _learningRate * 
 				_lookupHelper[n->_id]->_error;
@@ -133,17 +135,22 @@ std::vector<double> Network::getOutputs() {
 
 
 std::ostream &operator<<(std::ostream &out, const Network &n) {
-	out << "nodes\n";
+	out << "nodes:\n";
 	for(size_t i = 0; i < n._network.size(); ++i) {
 		for(size_t j = 0; j < n._network[i].size(); ++j) {
 			out << n._network[i][j]->_id << " ";
 		}
-		out << "\n";
 	}
-	out << "weights\n";
+	out << "\nweights:\n";
 	for(auto it = n._weights.begin(); it != n._weights.end(); ++it) {
 		out << it->first.first << ", " << it->first.second << ": " << 
 			it->second << "\n";
+	}
+	out << "biases:\n";
+	for(size_t i = 0; i < n._network.size(); ++i) {
+		for(size_t j = 0; j < n._network[i].size(); ++j) {
+			out << n._network[i][j]->_id << ": " << n._network[i][j]->_bias << "\n";
+		}
 	}
 	return out;
 }

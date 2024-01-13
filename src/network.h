@@ -67,7 +67,7 @@ private:
 	// helper list of output neurons
 	std::vector<Neuron*> _outputHelper;
 
-	double _learningRate = 0.3;
+	double _learningRate = 0.2;
 
 };
 

@@ -13,6 +13,9 @@ int g_innovationNumber;
 int g_visualizeNumber;
 
 
+/*
+ * Function to visualize the genome or network in graphviz
+ */
 void visualizeGraph(const Genome &g, const std::string dir = "util/") {
 	std::string dotCode = generateDotCode(g);
 	std::string dotFilename = dir + "network" + 
@@ -37,6 +40,69 @@ void visualizeGraph(const Genome &g, const std::string dir = "util/") {
 }
 
 
+/*
+ * Function to run the XOR problem on neural network
+ */
+void XORproblem() {
+	// Testing basic neural network on the xor problem
+	// Create genome: has 2 input, 2 hidden, 1 output
+	Genome xorTest;
+	xorTest.addNode(1,1,NodeGene::SENSOR);
+	xorTest.addNode(2,1,NodeGene::SENSOR);
+	xorTest.addNode(3,2,NodeGene::HIDDEN);
+	xorTest.addNode(4,2,NodeGene::HIDDEN);
+	xorTest.addNode(5,3,NodeGene::OUTPUT);
+	xorTest.addConnection(1,3,2,true,1);
+	xorTest.addConnection(1,4,2,true,2);
+	xorTest.addConnection(2,3,2,true,3);
+	xorTest.addConnection(2,4,2,true,4);
+	xorTest.addConnection(3,5,2,true,5);
+	xorTest.addConnection(4,5,2,true,6);
+	
+	visualizeGraph(xorTest);
+	std::cout << "XOR network genome:\n";
+	xorTest.printGenome();
+
+	Network xorNet = Network(xorTest);
+
+	// Train the network
+	// The indexes match up the input to the output
+	std::vector<std::vector<double>> inputSet;
+	std::vector<std::vector<double>> solutionSet;
+	inputSet.push_back({0,0});
+	solutionSet.push_back({0});
+	inputSet.push_back({0,1});
+	solutionSet.push_back({1});
+	inputSet.push_back({1,0});
+	solutionSet.push_back({1});
+	inputSet.push_back({1,1});
+	solutionSet.push_back({0});
+
+	std::cout << "\nNetwork Before Training:\n" << xorNet;
+
+	for(int i = 0; i < 10000; i++) {
+		int randIndex = rand() % 4;
+		xorNet.feedForward(inputSet[randIndex]);
+		xorNet.backPropogation(solutionSet[randIndex]);
+	}
+	
+	std::cout << "\nNetwork After Training:\n" << xorNet;
+
+	// Test accuracy
+	std::cout << "\nTesting Network Accuracy:\n";
+	for(int i = 0; i < 4; i++) {
+		xorNet.feedForward(inputSet[i]);
+		std::cout << "Inputs: ";
+		for(auto input : inputSet[i]) { std::cout << input << " "; }
+		std::cout << "Outputs: ";
+		for(auto output : xorNet.getOutputs()) {
+			std::cout << output << " ";
+		}
+		std::cout << "\n";
+	}
+}
+
+
 int main(int argc, char** argv){
 	srand((unsigned) time(NULL));
 
@@ -50,7 +116,7 @@ int main(int argc, char** argv){
 	*/
 
 	// MAKE SURE THAT INNOVATIONS FOR DIFFERENT GENOMES ARE SORTED ACCORDINGLY
-	Genome test;
+	/*Genome test;
 	test.addNode(1,1,NodeGene::Type::SENSOR);
 	test.addNode(2,1,NodeGene::Type::SENSOR);
 	test.addNode(3,2,NodeGene::Type::HIDDEN);
@@ -76,7 +142,7 @@ int main(int argc, char** argv){
 	std::cout << "Original Genome test 1\n";
 	test.mutateNode();
 	test.printGenome();
-	visualizeGraph(test);
+	visualizeGraph(test);*/
 	
 	/*test2._innovationCounter = 6;
 	std::cout << "Original Network test 2\n";
@@ -103,9 +169,11 @@ int main(int argc, char** argv){
 	visualizeGraph(result);
 	result.printGenome();*/
 
+
 	// This is tentative testing of neural net
 	// Neural Network test
-	Network networkTest = Network(test);
+	
+	/*Network networkTest = Network(test);
 	std::cout << "Original Network\n";
 	std::cout << networkTest;
 
@@ -122,8 +190,10 @@ int main(int argc, char** argv){
 	for(double x : output) {
 		std::cout << x << " ";
 	}
-	std::cout << "\n";
-	
+	std::cout << "\n";*/
+
+	XORproblem();
+
 	return 0;
 }
 
