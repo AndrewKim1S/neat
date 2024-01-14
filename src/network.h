@@ -49,8 +49,9 @@ public:
 	void feedForward(const std::vector<double> &inputs);
 	void backPropogation(const std::vector<double> &targets);
 
-	void train(const std::vector<std::vector<double>> &trainingData, 
-		float learningRate, size_t epochs);
+	void train(const std::vector<std::vector<double>> &trainingData,
+		const std::vector<std::vector<double>> &expectedOutput,	float learningRate, 
+		size_t epochs, size_t numOutputs);
 
 	std::vector<double> getOutputs();
 

@@ -115,13 +115,30 @@ void Network::backPropogation(const std::vector<double> &targets) {
 
 
 // Function to train the neural network
-void train(const std::vector<std::vector<double>> &trainingData, 
-	float learningRate, size_t epochs) {
+// Each row of the training data has the inputs & last element is expected
+void Network::train(const std::vector<std::vector<double>> &trainingData, 
+	const std::vector<std::vector<double>> &expectedOutput, float learningRate, 
+	size_t epochs, size_t numOutputs) {
+
+	_learningRate = learningRate;
+	// Iterate over epochs
 	for(size_t i = 0; i < epochs; ++i) {
 		double errorSum = 0;
-		for(auto &row : trainingData) {
-			
+
+		// Iterate over all training data
+		for(size_t j = 0; j < trainingData.size(); ++j) {
+			feedForward(trainingData[j]);
+			std::vector<double> outputs = std::move(getOutputs());
+			for(size_t k = 0; k < numOutputs; ++k) {
+				// Squared error
+				errorSum += static_cast<double>(std::pow((expectedOutput[j][k] - 
+					outputs[k]), 2));
+			}
+			backPropogation(expectedOutput[j]);
 		}
+		
+		std::cout << "[>] epoch: " << i << ", l_rate: " << learningRate 
+			<< ", error: " << errorSum << "\n";
 	}
 }
 

@@ -80,11 +80,7 @@ void XORproblem() {
 
 	std::cout << "\n----- Network Before Training -----\n" << xorNet;
 
-	for(int i = 0; i < 100000; i++) {
-		int randIndex = rand() % 4;
-		xorNet.feedForward(inputSet[randIndex]);
-		xorNet.backPropogation(solutionSet[randIndex]);
-	}
+	xorNet.train(inputSet, solutionSet, 0.3, 10000, 1);
 	
 	std::cout << "\n----- Network After Training -----\n" << xorNet;
 
