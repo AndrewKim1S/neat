@@ -47,11 +47,6 @@ void XORproblem() {
 	// Testing basic neural network on the xor problem
 	// Create genome: has 2 input, 2 hidden, 1 output
 	Genome xorTest;
-	/*xorTest.addNode(1,1,NodeGene::SENSOR);
-	xorTest.addNode(2,1,NodeGene::SENSOR);
-	xorTest.addNode(3,2,NodeGene::OUTPUT);
-	xorTest.addConnection(1,3,0.5,true,1);
-	xorTest.addConnection(2,3,0.3,true,2);*/
 	xorTest.addNode(1,1,NodeGene::SENSOR);
 	xorTest.addNode(2,1,NodeGene::SENSOR);
 	xorTest.addNode(3,2,NodeGene::HIDDEN);
@@ -85,7 +80,7 @@ void XORproblem() {
 
 	std::cout << "\n----- Network Before Training -----\n" << xorNet;
 
-	for(int i = 0; i < 10000000; i++) {
+	for(int i = 0; i < 100000; i++) {
 		int randIndex = rand() % 4;
 		xorNet.feedForward(inputSet[randIndex]);
 		xorNet.backPropogation(solutionSet[randIndex]);

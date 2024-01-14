@@ -105,17 +105,22 @@ void Network::backPropogation(const std::vector<double> &targets) {
 				_weights[c] += _learningRate * 
 					_lookupHelper[n->_id]->_error * 
 					_lookupHelper[j]->_output;
-				// FIXME
-				/*std::cout << "--------\n";
-				std::cout << j << ": ";
-				std::cout << _learningRate << ", ";
-				std::cout << _lookupHelper[n->_id]->_error << ", ";
-				std::cout << _lookupHelper[j]->_output << std::endl;
-			*/
 			}
 			// update bias
 			_lookupHelper[n->_id]->_bias += _learningRate * 
 				_lookupHelper[n->_id]->_error;
+		}
+	}
+}
+
+
+// Function to train the neural network
+void train(const std::vector<std::vector<double>> &trainingData, 
+	float learningRate, size_t epochs) {
+	for(size_t i = 0; i < epochs; ++i) {
+		double errorSum = 0;
+		for(auto &row : trainingData) {
+			
 		}
 	}
 }

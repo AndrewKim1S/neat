@@ -49,6 +49,9 @@ public:
 	void feedForward(const std::vector<double> &inputs);
 	void backPropogation(const std::vector<double> &targets);
 
+	void train(const std::vector<std::vector<double>> &trainingData, 
+		float learningRate, size_t epochs);
+
 	std::vector<double> getOutputs();
 
 	friend std::ostream &operator<<(std::ostream &out, const Network &n);
@@ -71,7 +74,7 @@ private:
 	// helper list of output neurons
 	std::vector<Neuron*> _outputHelper;
 
-	double _learningRate = 0.5;
+	double _learningRate = 0.3;
 
 };
 
