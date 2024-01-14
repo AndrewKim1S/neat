@@ -47,20 +47,25 @@ void XORproblem() {
 	// Testing basic neural network on the xor problem
 	// Create genome: has 2 input, 2 hidden, 1 output
 	Genome xorTest;
+	/*xorTest.addNode(1,1,NodeGene::SENSOR);
+	xorTest.addNode(2,1,NodeGene::SENSOR);
+	xorTest.addNode(3,2,NodeGene::OUTPUT);
+	xorTest.addConnection(1,3,0.5,true,1);
+	xorTest.addConnection(2,3,0.3,true,2);*/
 	xorTest.addNode(1,1,NodeGene::SENSOR);
 	xorTest.addNode(2,1,NodeGene::SENSOR);
 	xorTest.addNode(3,2,NodeGene::HIDDEN);
 	xorTest.addNode(4,2,NodeGene::HIDDEN);
 	xorTest.addNode(5,3,NodeGene::OUTPUT);
-	xorTest.addConnection(1,3,2,true,1);
-	xorTest.addConnection(1,4,2,true,2);
-	xorTest.addConnection(2,3,2,true,3);
-	xorTest.addConnection(2,4,2,true,4);
-	xorTest.addConnection(3,5,2,true,5);
-	xorTest.addConnection(4,5,2,true,6);
+	xorTest.addConnection(1,3,0.5,true,1);
+	xorTest.addConnection(1,4,0.9 ,true,2);
+	xorTest.addConnection(2,3,0.4 ,true,3);
+	xorTest.addConnection(2,4,0.3 ,true,4);
+	xorTest.addConnection(3,5,0.2 ,true,5);
+	xorTest.addConnection(4,5,0.1 ,true,6);
 	
 	visualizeGraph(xorTest);
-	std::cout << "XOR network genome:\n";
+	std::cout << "----- XOR network genome -----\n";
 	xorTest.printGenome();
 
 	Network xorNet = Network(xorTest);
@@ -78,18 +83,18 @@ void XORproblem() {
 	inputSet.push_back({1,1});
 	solutionSet.push_back({0});
 
-	std::cout << "\nNetwork Before Training:\n" << xorNet;
+	std::cout << "\n----- Network Before Training -----\n" << xorNet;
 
-	for(int i = 0; i < 10000; i++) {
+	for(int i = 0; i < 10000000; i++) {
 		int randIndex = rand() % 4;
 		xorNet.feedForward(inputSet[randIndex]);
 		xorNet.backPropogation(solutionSet[randIndex]);
 	}
 	
-	std::cout << "\nNetwork After Training:\n" << xorNet;
+	std::cout << "\n----- Network After Training -----\n" << xorNet;
 
 	// Test accuracy
-	std::cout << "\nTesting Network Accuracy:\n";
+	std::cout << "\n----- Testing Network Accuracy -----\n";
 	for(int i = 0; i < 4; i++) {
 		xorNet.feedForward(inputSet[i]);
 		std::cout << "Inputs: ";

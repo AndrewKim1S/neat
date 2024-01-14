@@ -44,7 +44,6 @@ void Network::feedForward(const std::vector<double> &inputs) {
 	}
 	// Propogate forward for the hidden & output layers
 	for(size_t i = 1; i < _network.size(); ++i) {
-		Layer prevLayer = _network[i-1];
 		// Loop through neuron within layers
 		for(size_t j = 0; j < _network[i].size(); ++j) {
 			Neuron *n = _network[i][j];
@@ -68,7 +67,7 @@ void Network::backPropogation(const std::vector<double> &targets) {
 	// Backpropogate error to all neurons
 	// reverse traverse the layers from output to input
 	for(int i = _numLayers-1; i >= 0; i--) {
-		Layer current = _network[i];
+		Layer &current = _network[i];
 	
 		// iterate through every neuron in the layer
 		for(size_t n = 0; n < current.size(); ++n) {
@@ -97,11 +96,8 @@ void Network::backPropogation(const std::vector<double> &targets) {
 
 	// Update weights of network
 	for(int i = 0; i < _numLayers; i++) {
-		Layer current = _network[i];
+		Layer &current = _network[i];
 		// input layer only is different
-		if(i == 0) {
-
-		}
 		for(auto &n : current) {
 			// update weights x -> n
 			for(auto &j : _fwdAdjacent[n->_id]) {
