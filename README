@@ -1,20 +1,19 @@
-NEAT Implementation in C++
+NEAT Implementation 
 
 
 ### src/ files:
-main.cpp         | main file
-gene.h		 | genes
+neat.cpp         | main file
+gene.h					 | genes
 gene.cpp
 genome.h         | genotype network
 genome.cpp
-network.h        | network
+network.h        | neural network
 network.cpp
 
 
 ### Compile Instructions:
-cd .
 make
-./a.out
+./obj/a.out
 
 
 ### How It Works
