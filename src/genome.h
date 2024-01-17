@@ -8,6 +8,12 @@
 #include "nodeGene.h"
 #include "connectionGene.h"
 
+
+// Globals for speciation
+extern const double g_c1;
+extern const double g_c2;
+extern const double g_c3;
+
 /* Genome class - It is the genotype of the neural network
  * list of node genes in the network (sorted by id)
  *list of connection genes (sorted by innovation number)
@@ -25,14 +31,19 @@ public:
 		std::vector<ConnectionGene*>& connections);
 	~Genome();
 
+	// genome
 	void addNode(int id, int layer, NodeGene::Type type);
 	void addConnection(int in, int out, double weight, bool enabled, int inno);
 
+	// Mutations
 	ConnectionGene* mutateConnection();
 	std::pair<ConnectionGene*, ConnectionGene*> mutateNode();
 
 	void printGenome() const;
 
+	friend double compatabilityDistance(Genome &g1, Genome &g2);
+
+	// Variables
 	std::vector<NodeGene*> _nodes;
 	std::vector<ConnectionGene*> _connections;
 
@@ -48,4 +59,5 @@ private:
 	
 
 std::string generateDotCode(const Genome &g);
+int findConnection(std::vector<ConnectionGene*> &list, int inn);
 Genome crossover(Genome &g1, Genome &g2);

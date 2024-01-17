@@ -1,6 +1,12 @@
 #include "genome.h"
 
 
+// Define globals
+const double g_c1 = 1;
+const double g_c2 = 1;
+const double g_c3 = 1;
+
+
 // Constructor & Destructor
 Genome::Genome() {
 	_innovationCounter = 1;
@@ -58,7 +64,7 @@ ConnectionGene* Genome::mutateConnection() {
 			(check)){ 
 			found = true;
 		}
-	}
+}
 
 	_adjacentNodes[srcNodeID].push_back(dstNodeID);
 	ConnectionGene *newc = new ConnectionGene(srcNodeID, dstNodeID, 1.0, true,
@@ -155,6 +161,8 @@ void Genome::printGenome() const {
 	}*/
 }
 
+
+// Generate dot code to display graph in graphviz
 std::string generateDotCode(const Genome &g) {
 	std::string dotCode = "digraph Network {\nrankdir=\"LR\"\nnode [shape=\"square\"]\n";
 	for(auto &n : g._nodes) {
@@ -170,6 +178,24 @@ std::string generateDotCode(const Genome &g) {
 }
 
 
+// Lambda function for binary search to find gene
+int findConnection(std::vector<ConnectionGene*> &list, int inn){
+	int low = 0;
+	int high = list.size()-1;
+	while(low <= high) {
+		int mid = low + (high - low)/2;
+		if(list[mid]->_innovationNumber == inn) {
+			return mid;
+		} else if (list[mid]->_innovationNumber < inn) {
+			low = mid+1;
+		} else {
+			high = mid-1;
+		}
+	}
+	return -1;
+};
+
+
 // TODO WORK IN PROGRESS
 // Preset chance that disabled genes become enabled again
 // Remove false connections
@@ -182,28 +208,12 @@ Genome crossover(Genome &g1, Genome &g2) {
 	std::vector<ConnectionGene*> newConnections;
 	std::vector<NodeGene*> newNodes; 
 
-	// Lambda function for binary search
-	auto findConnection = [](std::vector<ConnectionGene*> &list, int inn){
-		int low = 0;
-		int high = list.size()-1;
-		while(low <= high) {
-			int mid = low + (high - low)/2;
-			if(list[mid]->_innovationNumber == inn) {
-				return mid;
-			} else if (list[mid]->_innovationNumber < inn) {
-				low = mid+1;
-			} else {
-				high = mid-1;
-			}
-		}
-		return -1;
-	};
-
 	// List to keep track of disjoint and excess genes
 	std::vector<int> g1DisjointExcessIndexes;
 	std::vector<int> g2DisjointExcessIndexes;
 
 	// Binary search on both genomes
+	// FIXME check that its not i <=
 	for(int i = 1; i < totalNumberInn; ++i){
 		int g1Index = findConnection(g1._connections, i);
 		int g2Index = findConnection(g2._connections, i);
@@ -263,49 +273,11 @@ Genome crossover(Genome &g1, Genome &g2) {
 		}
 	};
 
-	// TODO WIP
 	// Check fitness of genomes & add rest of connections
 	if(g1._fitness > g2._fitness) {
 		addAllConnections(g1, g1DisjointExcessIndexes);
-		// g1 is more fit
-		/*for(auto &c : g1DisjointExcessIndexes) {
-			ConnectionGene* newc = new ConnectionGene(
-				*g1._connections[c]);
-			newConnections.push_back(newc);
-			// Keep track of nodes
-			int src = newc->_inNodeID;
-			if(!visited[src-1]) {
-				NodeGene* newn = new NodeGene(*g1._nodes[src-1]);
-				newNodes.push_back(newn);
-			}
-			int dst = newc->_outNodeID;
-			if(!visited[dst-1]) {
-				NodeGene* newn = new NodeGene(*g1._nodes[dst-1]);
-				newNodes.push_back(newn);
-			}
-		}*/
-
 	} else if (g2._fitness > g1._fitness) {
 		addAllConnections(g2, g2DisjointExcessIndexes);
-		// g2 is more fit
-		/*for(auto &c : g2DisjointExcessIndexes) {
-			ConnectionGene* newc = new ConnectionGene(
-				*g2._connections[c]);
-			newConnections.push_back(newc);
-			
-			// Keep track of nodes
-			int src = newc->_inNodeID;
-			if(!visited[src-1]) {
-				NodeGene* newn = new NodeGene(*g2._nodes[src-1]);
-				newNodes.push_back(newn);
-			}
-			int dst = newc->_outNodeID;
-			if(!visited[dst-1]) {
-				NodeGene* newn = new NodeGene(*g2._nodes[dst-1]);
-				newNodes.push_back(newn);
-			}
-		}*/
-
 	} else {
 		// g1 and g2 are equally fit
 		// TODO
@@ -324,6 +296,46 @@ Genome crossover(Genome &g1, Genome &g2) {
 	});
 
 	return Genome(newNodes, newConnections);
+}
+
+
+/*
+ * Function to calculate the compatabilityDistance between genomes
+ */
+// FIXME not yet finished
+double compatabilityDistance(Genome &g1, Genome &g2) {
+	int totalNumberInn = std::max(g1._innovationCounter, g2._innovationCounter);
+	
+	double E = 0;									// Number of excess
+	double D = 0;									// Number of disjoint
+	double W = 0;									// weight differences
+	double N = totalNumberInn;		// Number of genes in larger genome
+	
+	int numMatch = 0;
+
+	// Find the matching genes, & number of disjoint and excess genes
+	for(int i = 1; i < totalNumberInn; ++i) {
+		int g1Index = findConnection(g1._connections, i);
+		int g2Index = findConnection(g2._connections, i);
+
+		// Matching genes
+		if((g1Index != -1) && (g2Index != -1)) {
+			++numMatch;
+			W += std::abs(g1._connections[g1Index]->_weight
+				- g2._connections[g2Index]->_weight);
+		}	
+		else if(i > g1._innovationCounter || i > g2._innovationCounter) {
+			E++;
+		}
+		else { D++; }
+	}
+
+	W /= numMatch;
+
+	std::cout << "N: " << N << " E: " << E << " D: " << D << " W: " << W << std::endl;
+
+	double delta = (g_c1 * E)/N + (g_c2 * D)/N + (g_c3 * W);
+	return delta;
 }
 
 

@@ -1,14 +1,16 @@
 NEAT Implementation 
 
 
-### src/ files:
+### source files:
 neat.cpp         | main file
-gene.h					 | genes
+gene.h           | genes
 gene.cpp
 genome.h         | genotype network
 genome.cpp
 network.h        | neural network
 network.cpp
+species.h        | species 
+species.cpp
 
 
 ### Compile Instructions:

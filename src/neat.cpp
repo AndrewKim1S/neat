@@ -37,62 +37,44 @@ int main(int argc, char** argv){
 	*/
 
 	// MAKE SURE THAT INNOVATIONS FOR DIFFERENT GENOMES ARE SORTED ACCORDINGLY
-	/*Genome test;
-	test.addNode(1,1,NodeGene::Type::SENSOR);
-	test.addNode(2,1,NodeGene::Type::SENSOR);
-	test.addNode(3,2,NodeGene::Type::HIDDEN);
-	test.addNode(4,3,NodeGene::Type::OUTPUT);
-	test.addConnection(1,3,1,true,1);
-	test.addConnection(3,4,1,true,2);
-	test.addConnection(2,3,1,true,3);
+	Genome test1;
+	test1.addNode(1,1,NodeGene::SENSOR);
+	test1.addNode(2,1,NodeGene::SENSOR);
+	test1.addNode(3,1,NodeGene::SENSOR);
+	test1.addNode(4,3,NodeGene::OUTPUT);
+	test1.addNode(5,2,NodeGene::HIDDEN);
+	test1.addConnection(1,4,1,true,1);
+	test1.addConnection(2,4,1,false,2);
+	test1.addConnection(3,4,1,true,3);
+	test1.addConnection(2,5,1,true,4);
+	test1.addConnection(5,4,1,true,5);
+	test1.addConnection(1,5,1,true,8);
+	visualizeGraph(test1);
 
 	Genome test2;
-	test2.addNode(1,1,NodeGene::Type::SENSOR);
-	test2.addNode(2,1,NodeGene::Type::SENSOR);
-	test2.addNode(3,2,NodeGene::Type::HIDDEN);
-	test2.addNode(4,3,NodeGene::Type::OUTPUT);
-	test2.addConnection(1,3,2,true,1);
-	test2.addConnection(3,4,2,true,2);
-	test2.addConnection(2,3,2,true,3);
+	test2.addNode(1,1,NodeGene::SENSOR);
+	test2.addNode(2,1,NodeGene::SENSOR);
+	test2.addNode(3,1,NodeGene::SENSOR);
+	test2.addNode(4,4,NodeGene::OUTPUT);
+	test2.addNode(5,2,NodeGene::HIDDEN);
+	test2.addNode(6,3,NodeGene::HIDDEN);
+	test2.addConnection(1,4,2,true,1);
+	test2.addConnection(2,4,2,false,2);
+	test2.addConnection(3,4,2,true,3);
+	test2.addConnection(2,5,2,true,4);
+	test2.addConnection(5,4,2,false,5);
+	test2.addConnection(5,6,2,true,6);
+	test2.addConnection(6,4,2,true,7);
+	test2.addConnection(3,5,2,true,9);
+	test2.addConnection(1,6,2,true,10);
+	visualizeGraph(test2);
 
-	test._fitness = 1;
-	test2._fitness = 2;
+	compatabilityDistance(test1, test2);
 
-	// Genome test
-
-	std::cout << "Original Genome test 1\n";
-	test.mutateNode();
-	test.printGenome();
-	visualizeGraph(test);*/
-	
-	/*test2._innovationCounter = 6;
-	std::cout << "Original Network test 2\n";
-	test2.mutateConnection();
-	test2.printGenome();
-	visualizeGraph(test2);*/
-	
-	/*std::cout << "Mutated Node\n";
-	test.mutateNode();
-	test.printGenome();
-	visualizeGraph(test);
-	std::cout << "Mutated Connection\n";
-	test.mutateConnection();
-	visualizeGraph(test);
-	test.printGenome();
-	std::cout << "Mutated Node\n";
-	test.mutateNode();
-	visualizeGraph(test);
-	test.printGenome();*/
-
-	/*
-	Genome result = crossover(test, test2);
-	std::cout << "Crossover result\n";
-	visualizeGraph(result);
-	result.printGenome();*/
-
-	// To test the neural network solely
+	// For Neural Network Testing
 	// XORproblem();
-	SeedsNetTest();
+	// SeedsNetTest();
+	
 	return 0;
 }
 
