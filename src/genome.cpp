@@ -197,7 +197,8 @@ int findConnection(std::vector<ConnectionGene*> &list, int inn){
 };
 
 
-// TODO WORK IN PROGRESS
+// TODO NEED UPDATE!
+// Make sure that the same nodes in diff layers are handled appropriately
 // Preset chance that disabled genes become enabled again
 // Remove false connections
 Genome crossover(Genome &g1, Genome &g2) {
@@ -351,19 +352,19 @@ Genome crossover(Genome &g1, Genome &g2) {
 /*
  * Function to calculate the compatabilityDistance between genomes
  */
-// FIXME not yet finished
 double compatabilityDistance(Genome &g1, Genome &g2) {
 	int totalNumberInn = std::max(g1._innovationCounter, g2._innovationCounter);
 	
 	double E = 0;									// Number of excess
 	double D = 0;									// Number of disjoint
 	double W = 0;									// weight differences
-	double N = totalNumberInn;		// Number of genes in larger genome
+	double N = std::max(g1._nodes.size(), g2._nodes.size());
+	N = (N < 20) ? 1 : N;
 	
 	int numMatch = 0;
 
 	// Find the matching genes, & number of disjoint and excess genes
-	for(int i = 1; i < totalNumberInn; ++i) {
+	for(int i = 1; i <= totalNumberInn; ++i) {
 		int g1Index = findConnection(g1._connections, i);
 		int g2Index = findConnection(g2._connections, i);
 
