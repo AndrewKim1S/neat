@@ -19,6 +19,7 @@ void XORNetTest();
 void visualizeGraph(const Genome &g, const std::string dir = "util/");
 std::vector<std::vector<double>> loadData(const std::string filename, 
 	const std::string dir = "src/");
+void neat();
 
 
 /*
@@ -37,7 +38,7 @@ int main(int argc, char** argv){
 	*/
 
 	// MAKE SURE THAT INNOVATIONS FOR DIFFERENT GENOMES ARE SORTED ACCORDINGLY
-	Genome test1;
+	/*Genome test1;
 	test1.addNode(1,1,NodeGene::SENSOR);
 	test1.addNode(2,1,NodeGene::SENSOR);
 	test1.addNode(3,1,NodeGene::SENSOR);
@@ -87,13 +88,21 @@ int main(int argc, char** argv){
 	// child.printGenome();
 
 
-	compatabilityDistance(test1, test2);
+	compatabilityDistance(test1, test2);*/
 
 	// For Neural Network Testing
-	// XORproblem();
+	XORNetTest();
 	// SeedsNetTest();
 	
 	return 0;
+}
+
+
+/*
+ * Function to test the neat algorithm
+ */
+void neat() {
+
 }
 
 

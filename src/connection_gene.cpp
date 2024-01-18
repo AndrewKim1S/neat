@@ -1,4 +1,4 @@
-#include "connectionGene.h"
+#include "connection_gene.h"
 
 
 ConnectionGene::ConnectionGene() {}

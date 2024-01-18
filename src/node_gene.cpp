@@ -1,4 +1,4 @@
-#include "nodeGene.h"
+#include "node_gene.h"
 
 
 NodeGene::NodeGene() {}

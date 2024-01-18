@@ -5,8 +5,8 @@
 #include <stack>
 #include <map>
 #include <algorithm>
-#include "nodeGene.h"
-#include "connectionGene.h"
+#include "node_gene.h"
+#include "connection_gene.h"
 
 
 // Globals for speciation
@@ -48,6 +48,7 @@ public:
 	std::vector<ConnectionGene*> _connections;
 
 	double _fitness;
+	double _explicitFitnessSharing;
 
 	int _innovationCounter;
 
