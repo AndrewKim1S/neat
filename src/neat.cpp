@@ -44,11 +44,12 @@ int main(int argc, char** argv){
 	test1.addNode(4,3,NodeGene::OUTPUT);
 	test1.addNode(5,2,NodeGene::HIDDEN);
 	test1.addConnection(1,4,1,true,1);
-	test1.addConnection(2,4,1,false,2);
+	test1.addConnection(2,4,1,false,2); // set to false
 	test1.addConnection(3,4,1,true,3);
 	test1.addConnection(2,5,1,true,4);
 	test1.addConnection(5,4,1,true,5);
 	test1.addConnection(1,5,1,true,8);
+	test1._fitness = 1;
 	visualizeGraph(test1);
 
 	Genome test2;
@@ -59,17 +60,34 @@ int main(int argc, char** argv){
 	test2.addNode(5,2,NodeGene::HIDDEN);
 	test2.addNode(6,3,NodeGene::HIDDEN);
 	test2.addConnection(1,4,2,true,1);
-	test2.addConnection(2,4,2,false,2);
+	test2.addConnection(2,4,2,false,2); // set to false
 	test2.addConnection(3,4,2,true,3);
 	test2.addConnection(2,5,2,true,4);
-	test2.addConnection(5,4,2,false,5);
+	test2.addConnection(5,4,2,false,5);	// set to false
 	test2.addConnection(5,6,2,true,6);
 	test2.addConnection(6,4,2,true,7);
 	test2.addConnection(3,5,2,true,9);
 	test2.addConnection(1,6,2,true,10);
+	test2._fitness = 1;
 	visualizeGraph(test2);
 
-	compatabilityDistance(test1, test2);
+	test1._innovationCounter = 8;
+	test2._innovationCounter = 10;
+
+
+	Genome child = crossover(test1, test2);
+	visualizeGraph(child);
+
+	std::cout << "\n" << "Crossover\n";
+	std::cout << "Parent 1: \n";
+	test1.printGenome();
+	std::cout << "\nParent 2: \n";
+	test2.printGenome();
+	std::cout << "\nChild : \n";
+	child.printGenome();
+
+
+	// compatabilityDistance(test1, test2);
 
 	// For Neural Network Testing
 	// XORproblem();
